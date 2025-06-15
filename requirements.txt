@@ -1,0 +1,24 @@
+# Streamlit for the web interface
+streamlit
+streamlit-authenticator
+streamlit-auth0-component
+
+# Requests for making HTTP requests
+requests
+
+# Flask for the web framework
+flask
+# verificar as portas
+socket
+
+# Authlib for OAuth2 authentication
+Authlib>=1.3.2
+
+# Rich for rich text and formatting in the terminal
+rich
+
+#database
+psycopg2-binary
+
+#metricas
+psutil

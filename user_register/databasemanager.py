@@ -2,7 +2,7 @@ import psycopg2
 import psycopg2.extras
 
 
-from tools import EditorTxt
+from tools.edits import EditorTxt
 host = "localhost"
 database = "usuarios"
 username = "postgres"

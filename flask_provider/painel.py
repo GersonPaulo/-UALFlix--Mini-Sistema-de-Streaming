@@ -1,14 +1,21 @@
 import streamlit as st
+from streamlit_auth0 import login_button
 import requests
 import os
 
+# logotipo
+st.set_page_config(page_title="Ualflix", page_icon="images/logo_ualflix.png", layout="wide")
+st.sidebar.image("images/logo_ualflix.png", width=150)
+st.sidebar.subheader("ADM")
+st.image("images/logo_ualflix.png", width=100) #logotipo unico da pagina
+st.title(""         ""       ""         "") # espaco entre titulo e header
 
-
-
+#classe base do painel
 class Painel():
     def __init__(self):
         self.save_folder = r"C:\Users\igorp\OneDrive\Documentos\docker_test1\flask_provider\vids_flask"
         self.endpoints = ["http://192.168.1.74:7000/video_list", "http://127.0.0.1:7000/video_list"]
+
         pass
 
     #combina o nome dos files com os endpoinst flask local and 192 porta 7000
@@ -30,6 +37,7 @@ class Painel():
 
     # Processa e salva cada arquivo
     def uploads(self):
+
         uploaded_file = st.file_uploader("Choose a Video")
         if uploaded_file is not None:
             if self.is_file_type(uploaded_file.name, "mp4"):
@@ -41,32 +49,42 @@ class Painel():
                 st.write("ficheiro Invalido :", uploaded_file.name)
         else:
             pass
-        # Lista os arquivos salvos
-        if st.button(f"Arquivos salvos na pasta"):
-            st.write("Arquivos salvos na pasta:")
-            st.write(os.listdir(self.save_folder))
-
-        #mostra um link direto para os videos
-        if st.button(f"Link direto dos videos:"):
-            videos = self.fetch_video_list()
-            vid_names = list(videos.keys())
-            i =0
-            for links in list(videos.values()):
-                i+=1
-                st.write(f"{vid_names[i]}:")
-                st.subheader(links.replace(" ", "%20"))
 
 
+# Definição das credenciais do admin
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin123"
 
-# logotipo
-st.set_page_config(page_title="Ualflix", page_icon="images/logo_ualflix.png", layout="wide")
-st.sidebar.image("images/logo_ualflix.png", width=150)
-st.sidebar.subheader("ADM")
-st.image("images/logo_ualflix.png", width=100) #logotipo unico da pagina
-st.title("Ualflix  Painel administrativo simples") #titulo da pagina
-st.title(""         ""       ""         "") # espaco entre titulo e header
-st.header(f"ADM ")# texto antes do coteudo
+# Inicializar sessão
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
-# Caminho absoluto onde os arquivos serão salvos
+# Função principal
+def main():
+    st.title("Admin Login")
 
-painel_run = Painel().uploads()
+    if not st.session_state.logged_in:
+        with st.form("login_form"):
+            st.subheader("Login")
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+            submitted = st.form_submit_button("Login")
+        if submitted:
+            if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+                st.session_state.logged_in = True
+                st.success("Login successful. Welcome, admin 1!")
+                st.rerun()
+            else:
+                st.error("Invalid credentials.")
+    else:
+        st.success("You are logged in as admin.")
+        st.info("Admin dashboard content goes here.")
+        Painel().uploads()
+
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.rerun()
+
+if __name__ == "__main__":
+    main()
+
